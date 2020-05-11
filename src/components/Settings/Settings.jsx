@@ -1,29 +1,46 @@
 import React, { useState } from 'react';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { makeStyles } from '@material-ui/core/styles';
 import styles from "./Settings.module.scss";
 
-const Settings = ({ maxGrids, initializeAC }) => {
-  const [grid, setGrid] = useState({ error: false, helperText: '', value: '' });
+const useStyles = makeStyles((theme) => ({
+  start: {
+    marginTop: 20,
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 200,
+  },
+}));
 
-  const setGridValue = ({ target: { value } }) => {
-    if (!isNaN(value)) {
-      setGrid({...grid, value: +value});
-    }
-  }
+const Settings = ({ initializeAC }) => {
+  const classes = useStyles();
+  const [grid, setGrid] = useState({ error: false, value: ''});
+  const [open, setOpen] = useState(false);
 
   const startGame = () => {
-    if (grid.value > maxGrids ) {
-      setGrid({...grid, error: true, helperText: `max ${maxGrids}`});
-    } else if (grid.value < 2) {
-      setGrid({...grid, error: true, helperText: 'min 2'});
-    } else if (grid.value % 2 !== 0) {
-      setGrid({...grid, error: true, helperText: 'odd number'});
+    if (!grid.value) {
+      if (!grid.error) setGrid({ ...grid, error: true });
+      return;
+    } 
+    setGrid({ error: false, value: '', open: false });
+    initializeAC(grid.value);
+  }
+
+
+  const handleChange = (e) => {
+    if (!e.target.value) {
+      setGrid({ value: e.target.value, error: true});
     } else {
-      setGrid({...grid, error: false, helperText: ''});
-      initializeAC(grid.value);
+      setGrid({ value: e.target.value, error: false});
     }
   }
+  const handleClose = () => setOpen(false);
+  const handleOpen = () => setOpen(true);
 
   return (
     <div className={styles.settings}>
@@ -35,20 +52,38 @@ const Settings = ({ maxGrids, initializeAC }) => {
         className={styles.image}
       />
 
-      <TextField 
-        error={grid.error} 
-        helperText={grid.helperText} 
-        id="standard-basic" 
-        label="Grid size (n x n, max 10)" 
-        value={grid.value}
-        onChange={setGridValue}
-      />
+      <FormControl className={classes.formControl}>
+        <InputLabel id="demo-controlled-open-select-label">Grid size (n x n, max 10)</InputLabel>
+        <Select
+          labelId="demo-controlled-open-select-label"
+          id="demo-controlled-open-select"
+          open={open}
+          onClose={handleClose}
+          onOpen={handleOpen}
+          value={grid.value}
+          onChange={handleChange}
+          error={grid.error}
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          <MenuItem value={2}>2 x 2</MenuItem>
+          <MenuItem value={4}>4 x 4</MenuItem>
+          <MenuItem value={6}>6 x 6</MenuItem>
+          <MenuItem value={8}>8 x 8</MenuItem>
+          <MenuItem value={10}>10 x 10</MenuItem>
+        </Select>
+      </FormControl>
 
-      <div className={styles.start}>
-        <Button variant="outlined" color="secondary" onClick={startGame}>
-          Start Game
-        </Button>
-      </div>
+
+      <Button 
+        className={classes.start} 
+        variant="outlined" 
+        color="secondary" 
+        onClick={startGame}
+      >
+        Start Game
+      </Button>
     </div>
   )
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import styles from "./Cards.module.scss";
 
 const Cards = ({ gridMap, cardClicked }) => {
-  return <div className={styles.cards}>
+  console.log(gridMap.length)
+  return <div className={styles.cards} style={{width: 59 * Math.sqrt(gridMap.length) }}>
     {gridMap.map((item) => {
       return (
         <div 

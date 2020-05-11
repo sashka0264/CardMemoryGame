@@ -14,9 +14,9 @@ const AppContainer = () => (
   </Provider>
 );
 
-const App = ({ initialized, initialize, openCard, maxGrids, gridMap, lastCard, restart }) => {
+const App = ({ initialized, initialize, openCard, gridMap, lastCard, restart }) => {
 
-  if (!initialized) return <Settings maxGrids={maxGrids} initializeAC={initialize} />
+  if (!initialized) return <Settings initializeAC={initialize} />
 
   const cardClicked = (id, color) => {
     if (lastCard.id !== id) openCard(id, color)
@@ -31,9 +31,8 @@ const App = ({ initialized, initialize, openCard, maxGrids, gridMap, lastCard, r
   );
 }
 
-const mapStateToProps = ({ initialized, maxGrids, gridMap, lastCard }) => ({
+const mapStateToProps = ({ initialized, gridMap, lastCard }) => ({
   initialized,
-  maxGrids,
   gridMap,
   lastCard
 });

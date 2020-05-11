@@ -3,10 +3,10 @@ import {
   OPEN_CARD,
   RESTART
 } from './actions';
+import { colorsGenerator, mapGenerator } from '../helpers/initialize';
 
 export const initialState = {
   initialized: false,
-  maxGrids: 10,
   gridMap: null,
   lastCard: {
     id: null,
@@ -18,28 +18,8 @@ const reducer = (state = initialState, action) => {
   // console.log(action)
   switch (action.type) {
     case INITIALIZE: 
-      const colorsGenerator = (amount) => { // amount = (кол-во карточек) / 2
-        const arr = [];
-        const randomColor = () => {
-          const letters = '0123456789ABCDEF';
-          let color = '#';
-          for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-          }
-          if (!arr.includes(color)) arr.push(color);
-          if (arr.length < amount) randomColor();
-        }
-        randomColor();
-        return [...arr, ...arr].sort(() => Math.random() - 0.5);
-      }
-
       const colors = colorsGenerator( (action.useGrids ** 2) / 2);
-
-      const map = [];
-      for (let i = 1; i <= action.useGrids ** 2; i += 1) {
-        map.push({ id: `grid${i}`, opened: false, color: colors[i-1]})
-      }
-
+      const map = mapGenerator(colors, action.useGrids);
       return {
         ...state,
         initialized: true,
